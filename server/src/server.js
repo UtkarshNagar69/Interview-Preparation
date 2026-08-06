@@ -6,10 +6,13 @@ dns.setServers(["8.8.8.8"]);
 const express = require("express");
 const connectDB = require("./config/db");
 
-const app = express();
+const userRoute = require("./routes/userRoute")
 
-connectDB()
+const app = express();
+connectDB();
+
 app.use(express.json());
+app.use("/users", userRoute)
 
 const PORT = process.env.PORT;
 app.listen(PORT, (error) =>
