@@ -66,12 +66,15 @@ const getAllCategory = async (req, res) => {
     let categories = await categoryModel.find();
 
     if (categories.length === 0) {
-      return res.status(404).json({ msg: "No Categories Found" });
+      return res.status(404).json({
+        msg: "No Categories Found",
+      });
     }
 
-    return res
-      .status(200)
-      .json({ msg: "Categories Fetched Successfully", categories });
+    return res.status(200).json({
+      msg: "Categories Fetched Successfully",
+      categories,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
@@ -96,6 +99,7 @@ const getCategoryById = async (req, res) => {
         msg: "Category Not Found",
       });
     }
+
     return res.status(200).json({
       msg: "Category Fetched Successfully",
       category,
@@ -134,7 +138,7 @@ const updateCategory = async (req, res) => {
         });
       }
 
-      if (categoryName.length < 2 || !isValidName(categoryName)) {
+      if (!isValidCategoryName(categoryName)) {
         return res.status(400).json({
           msg: "Invalid Category Name",
         });
@@ -202,20 +206,24 @@ const deleteCategory = async (req, res) => {
     let categoryId = req.params.id;
 
     if (!isValidObjectId(categoryId)) {
-      return res.status(400).json({ msg: "Invalid Id" });
+      return res.status(400).json({
+        msg: "Invalid Category Id",
+      });
     }
 
     let category = await categoryModel.findById(categoryId);
+
     if (!category) {
-      return res.status(404).json({ msg: "User Not Found" });
+      return res.status(404).json({
+        msg: "Category Not Found",
+      });
     }
 
-    if (category.role === "admin") {
-      return res.status(403).json({ msg: "Admin Cannot be deleted" });
-    }
+    await CategoryModel.findByIdAndDelete(categoryId);
 
-    await categoryModel.findByIdAndDelete(categoryId);
-    return res.status(200).json({ msg: "category Deleted Successfully" });
+    return res.status(200).json({
+      msg: "Category Deleted Successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
