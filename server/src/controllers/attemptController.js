@@ -227,9 +227,62 @@ const completeInterview = async (req, res) => {
   }
 };
 
+// Get My All Attempts
+const getMyAttempts = async (req, res) => {
+  try {
+    let attempts = await AttemptModel.find({ userId: req.userId })
+      .populate("interviewId", "title description category difficulty")
+      .sort({ createdAt: -1 });
+
+    if (attempts.length === 0) {
+      return res.status(404).json({ msg: "No Attempts Found" });
+    }
+
+    return res
+      .status(200)
+      .json({ msg: "Attempts Fetched Successfully", attempts });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// Get Single Attempt
+const getSingleAttempt = async (req, res) => {
+  try {
+    let attemptId = req.params.attemptId;
+    if (!isValidObjectId(attemptId)) {
+      return res.status(400).json({ msg: "Invalid Attempt Id" });
+    }
+
+    let attempt = await AttemptModel.findById(attemptId).populate(
+      "interviewId",
+      "title description category difficulty",
+    );
+
+    if (!attempt) {
+      return res.status(404).json({ msg: "Attempt Not Found" });
+    }
+
+    if (attempt.userId.toString() !== req.userId.toString()) {
+      return res
+        .status(403)
+        .json({ msg: "You can access Only your own attempt." });
+    }
+    return res
+      .status(200)
+      .json({ msg: "Attempt Fetched Successfully", attempt });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   startInterview,
   addQuestionsToAttempt,
   submitAnswer,
   completeInterview,
+  getMyAttempts,
+  getSingleAttempt,
 };
