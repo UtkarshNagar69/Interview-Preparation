@@ -1,4 +1,4 @@
-const userModel = require("../models/userModel");
+const UserModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -40,7 +40,7 @@ const signupUser = async (req, res) => {
       return res.status(400).json({ msg: "Invalid Email" });
     }
 
-    let duplicateEmail = await userModel.findOne({ email });
+    let duplicateEmail = await UserModel.findOne({ email });
 
     if (duplicateEmail) {
       return res.status(400).json({ msg: "Email Already Exists" });
@@ -64,7 +64,7 @@ const signupUser = async (req, res) => {
       return res.status(400).json({ msg: "Invalid Phone Number" });
     }
 
-    let duplicatePhoneNo = await userModel.findOne({ phone });
+    let duplicatePhoneNo = await UserModel.findOne({ phone });
     if (duplicatePhoneNo) {
       return res.status(400).json({ msg: "Phone Number Already Exists" });
     }
@@ -89,7 +89,7 @@ const signupUser = async (req, res) => {
     let hashedPassword = await bcrypt.hash(password, 10);
     userData.password = hashedPassword;
 
-    let userAdded = await userModel.create(userData);
+    let userAdded = await UserModel.create(userData);
 
     return res.status(201).json({ msg: "Signup Successfully Done", userAdded });
   } catch (error) {
@@ -117,7 +117,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ msg: "Password is Required" });
     }
 
-    let user = await userModel.findOne({ email });
+    let user = await UserModel.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ msg: "User Not Found" });
@@ -152,7 +152,7 @@ const getProfile = async (req, res) => {
   try {
     let userId = req.userId;
 
-    let user = await userModel.findById(userId).select("-password");
+    let user = await UserModel.findById(userId).select("-password");
     if (!user) {
       return res.status(404).json({ msg: "User Not Found" });
     }
@@ -198,7 +198,7 @@ const updateProfile = async (req, res) => {
         return res.status(400).json({ msg: "Invalid Email" });
       }
 
-      let duplicateEmail = await userModel.findOne({
+      let duplicateEmail = await UserModel.findOne({
         email,
         _id: { $ne: userId },
       });
@@ -228,7 +228,7 @@ const updateProfile = async (req, res) => {
         return res.status(400).json({ msg: "Invalid Phone Number" });
       }
 
-      let duplicatePhoneNo = await userModel.findOne({
+      let duplicatePhoneNo = await UserModel.findOne({
         phone,
         _id: { $ne: userId },
       });
@@ -245,7 +245,7 @@ const updateProfile = async (req, res) => {
       }
     }
 
-    let updatedUserProfile = await userModel.findByIdAndUpdate(
+    let updatedUserProfile = await UserModel.findByIdAndUpdate(
       userId,
       userData,
       { new: true },
@@ -265,7 +265,7 @@ const deleteProfile = async (req, res) => {
   try {
     let userId = req.userId;
 
-    let deletedUserProfile = await userModel.findByIdAndDelete(userId);
+    let deletedUserProfile = await UserModel.findByIdAndDelete(userId);
 
     if (!deletedUserProfile) {
       return res.status(404).json({ msg: "User Not Found Or Already Deleted" });
@@ -281,7 +281,7 @@ const deleteProfile = async (req, res) => {
 // Get All Profiles (Admin)
 const getAllUsers = async (req, res) => {
   try {
-    let users = await userModel.find().select("-password");
+    let users = await UserModel.find().select("-password");
 
     if (users.length === 0) {
       return res.status(404).json({ msg: "No Users Found" });
@@ -303,7 +303,7 @@ const deleteUser = async (req, res) => {
       return res.status(400).json({ msg: "Invalid Id" });
     }
 
-    let user = await userModel.findById(userId);
+    let user = await UserModel.findById(userId);
     if (!user) {
       return res.status(404).json({ msg: "User Not Found" });
     }
@@ -312,7 +312,7 @@ const deleteUser = async (req, res) => {
       return res.status(403).json({ msg: "Admin Cannot be deleted" });
     }
 
-    await userModel.findByIdAndDelete(userId);
+    await UserModel.findByIdAndDelete(userId);
     return res.status(200).json({ msg: "User Deleted Successfully" });
   } catch (error) {
     console.log(error);

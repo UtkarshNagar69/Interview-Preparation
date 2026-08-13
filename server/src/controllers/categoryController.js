@@ -1,4 +1,4 @@
-const categoryModel = require("../models/categoryModel");
+const CategoryModel = require("../models/categoryModel");
 
 const {
   isValid,
@@ -26,7 +26,7 @@ const addCategory = async (req, res) => {
       return res.status(400).json({ msg: "Invalid CategoryName" });
     }
 
-    let duplicateCategory = await categoryModel.findOne({ categoryName });
+    let duplicateCategory = await CategoryModel.findOne({ categoryName });
 
     if (duplicateCategory) {
       return res.status(400).json({ msg: "Category Already Exists" });
@@ -50,7 +50,7 @@ const addCategory = async (req, res) => {
       }
     }
 
-    let category = await categoryModel.create(categoryData);
+    let category = await CategoryModel.create(categoryData);
     return res
       .status(200)
       .json({ msg: "Category Added Successfully", categoryData });
@@ -63,7 +63,7 @@ const addCategory = async (req, res) => {
 // Get All Category
 const getAllCategory = async (req, res) => {
   try {
-    let categories = await categoryModel.find();
+    let categories = await CategoryModel.find();
 
     if (categories.length === 0) {
       return res.status(404).json({
@@ -92,7 +92,7 @@ const getCategoryById = async (req, res) => {
       });
     }
 
-    let category = await categoryModel.findById(categoryId);
+    let category = await CategoryModel.findById(categoryId);
 
     if (!category) {
       return res.status(404).json({
@@ -144,7 +144,7 @@ const updateCategory = async (req, res) => {
         });
       }
 
-      let duplicateCategory = await categoryModel.findOne({
+      let duplicateCategory = await CategoryModel.findOne({
         categoryName,
         _id: { $ne: categoryId },
       });
@@ -178,7 +178,7 @@ const updateCategory = async (req, res) => {
       }
     }
 
-    let updatedCategory = await categoryModel.findByIdAndUpdate(
+    let updatedCategory = await CategoryModel.findByIdAndUpdate(
       categoryId,
       categoryData,
       { new: true },
@@ -211,7 +211,7 @@ const deleteCategory = async (req, res) => {
       });
     }
 
-    let category = await categoryModel.findById(categoryId);
+    let category = await CategoryModel.findById(categoryId);
 
     if (!category) {
       return res.status(404).json({

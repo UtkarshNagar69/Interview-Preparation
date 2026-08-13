@@ -10,6 +10,7 @@ const userRoute = require("./routes/userRoute");
 const categoryRoute = require("./routes/categoryRoute");
 const interviewRoute = require("./routes/interviewRoute");
 const aiRoute = require("./routes/aiRoute");
+const attemptRoute = require("./routes/attemptRoutes");
 
 const app = express();
 connectDB();
@@ -19,6 +20,7 @@ app.use("/users", userRoute);
 app.use("/categories", categoryRoute);
 app.use("/interview", interviewRoute);
 app.use("/ai", aiRoute);
+app.use("/attempts", attemptRoute);
 
 const PORT = process.env.PORT;
 app.listen(PORT, (error) =>
