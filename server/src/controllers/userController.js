@@ -89,6 +89,11 @@ const signupUser = async (req, res) => {
     let hashedPassword = await bcrypt.hash(password, 10);
     userData.password = hashedPassword;
 
+    // Profile Image
+    if (req.file) {
+      userData.profileImage = req.file.filename;
+    }
+
     let userAdded = await UserModel.create(userData);
 
     return res.status(201).json({ msg: "Signup Successfully Done", userAdded });
@@ -171,7 +176,7 @@ const updateProfile = async (req, res) => {
 
     let userData = req.body;
 
-    if (!userData || Object.keys(userData).length === 0) {
+    if (!userData || Object.keys(userData).length === 0 && !req.file) {
       return res
         .status(400)
         .json({ msg: "Bad Request! Enter Data to Update." });
@@ -243,6 +248,11 @@ const updateProfile = async (req, res) => {
           .status(400)
           .json({ msg: "Bio Should not exceed 200 Characters." });
       }
+    }
+
+    // Profile Image
+    if (req.file) {
+      userData.profileImage = req.file.filename;
     }
 
     let updatedUserProfile = await UserModel.findByIdAndUpdate(
