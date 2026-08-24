@@ -148,16 +148,14 @@ const getAllInterviews = async (req, res) => {
 
     let totalPages = Math.ceil(totalInterviews / limit);
 
-    return res
-      .status(200)
-      .json({
-        msg: "Interviews Fetched Successfully",
-        page,
-        limit,
-        totalInterviews,
-        totalPages,
-        interviews,
-      });
+    return res.status(200).json({
+      msg: "Interviews Fetched Successfully",
+      page,
+      limit,
+      totalInterviews,
+      totalPages,
+      interviews,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
@@ -190,7 +188,7 @@ const getInterviewById = async (req, res) => {
 // Update Interview (Admin)
 const updateInterview = async (req, res) => {
   try {
-    let interviewId = req.prams.id;
+    let interviewId = req.params.id;
     if (!isValidObjectId(interviewId)) {
       return res.status(400).json({ msg: "Invalid Interview Id" });
     }
@@ -295,7 +293,7 @@ const deleteInterview = async (req, res) => {
 
     let deletedInterview = await InterviewModel.findByIdAndDelete(interviewId);
 
-    if (!deleteInterview) {
+    if (!deletedInterview) {
       return res
         .status(404)
         .json({ msg: "Interview Not Found Or already deleted" });

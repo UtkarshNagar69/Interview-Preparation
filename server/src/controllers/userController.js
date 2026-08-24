@@ -1,6 +1,6 @@
 const UserModel = require("../models/userModel");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const {
   isValid,
@@ -11,8 +11,7 @@ const {
   isValidObjectId,
 } = require("../utils/validator");
 
-//Signup User
-
+// Signup User
 const signupUser = async (req, res) => {
   try {
     let userData = req.body;
@@ -176,7 +175,7 @@ const updateProfile = async (req, res) => {
 
     let userData = req.body;
 
-    if (!userData || Object.keys(userData).length === 0 && !req.file) {
+    if (!userData || (Object.keys(userData).length === 0 && !req.file)) {
       return res
         .status(400)
         .json({ msg: "Bad Request! Enter Data to Update." });
@@ -259,7 +258,7 @@ const updateProfile = async (req, res) => {
       userId,
       userData,
       { new: true },
-    );
+    ).select("-password");
 
     return res
       .status(200)
@@ -335,7 +334,7 @@ module.exports = {
   loginUser,
   getProfile,
   updateProfile,
-  getAllUsers,
   deleteProfile,
+  getAllUsers,
   deleteUser,
 };

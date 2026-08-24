@@ -28,6 +28,10 @@ app.use("/attempts", attemptRoute);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.use("/", (req, res) => {
+  res.json({ msg: "Hello from Interview Prep App" });
+});
+
 const PORT = process.env.PORT;
 app.listen(PORT, (error) =>
   error ? console.log(error) : console.log(`Server is Running at Port ${PORT}`),

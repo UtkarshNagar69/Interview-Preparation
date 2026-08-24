@@ -53,7 +53,7 @@ const addCategory = async (req, res) => {
     let category = await CategoryModel.create(categoryData);
     return res
       .status(200)
-      .json({ msg: "Category Added Successfully", categoryData });
+      .json({ msg: "Category Added Successfully", category });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });

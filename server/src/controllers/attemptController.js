@@ -1,5 +1,6 @@
 const AttemptModel = require("../models/attemptModel");
 const InterviewModel = require("../models/interviewModel");
+const ai = require("../config/gemini");
 
 const { isValidObjectId, isValid } = require("../utils/validator");
 
@@ -23,7 +24,7 @@ const startInterview = async (req, res) => {
     let attempt = await AttemptModel.create({
       userId: req.userId,
       interviewId: interviewId,
-      Questions: [],
+      questions: [],
       status: "started",
     });
 
@@ -221,6 +222,38 @@ const completeInterview = async (req, res) => {
       model: "gemini-3.6-flash",
       contents: prompt,
     });
+
+    let result = response.text;
+
+    let evaluation = JSON.parse(result);
+
+    if (evaluation.score === undefined || evaluation.feedback === undefined) {
+      return res.status(400).json({ msg: "Invalid AI Response" });
+    }
+
+    if (
+      typeof evaluation.score !== "number" ||
+      evaluation.score < 0 ||
+      evaluation.score > 100
+    ) {
+      return res.status(400).json({ msg: "Invalid AI Score" });
+    }
+
+    // Save Final Result
+    attempt.score = evaluation.score;
+    attempt.feedback = evaluation.feedback;
+    attempt.status = "completed";
+
+    await attempt.save();
+
+    return res.status(200).json({
+      msg: "Interview Completed",
+      result: {
+        score: attempt.score,
+        feedback: attempt.feedback,
+        status: attempt.status,
+      },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
@@ -257,7 +290,7 @@ const getSingleAttempt = async (req, res) => {
 
     let attempt = await AttemptModel.findById(attemptId).populate(
       "interviewId",
-      "title description category difficulty",
+      "title description categoryId difficulty",
     );
 
     if (!attempt) {

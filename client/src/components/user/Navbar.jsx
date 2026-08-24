@@ -159,11 +159,7 @@ const Navbar = () => {
               onClick={() => setMenuOpen((prev) => !prev)}
               className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.035] text-slate-300 backdrop-blur-xl transition hover:border-emerald-400/20 hover:bg-emerald-500/[0.05] hover:text-emerald-400 lg:hidden"
             >
-              {menuOpen ? (
-                <FiX size={19} />
-              ) : (
-                <FiMenu size={19} />
-              )}
+              {menuOpen ? <FiX size={19} /> : <FiMenu size={19} />}
             </button>
           </div>
         </div>

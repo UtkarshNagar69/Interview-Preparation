@@ -210,9 +210,7 @@ const Dashboard = () => {
 
           <button className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5 hover:shadow-emerald-400/20 sm:w-auto">
             <FiPlay size={16} />
-
             Start Interview
-
             <FiArrowRight
               size={16}
               className="transition-transform group-hover:translate-x-1"
@@ -276,9 +274,7 @@ const Dashboard = () => {
                     </div>
 
                     <div>
-                      <h2 className="font-semibold">
-                        Performance Overview
-                      </h2>
+                      <h2 className="font-semibold">Performance Overview</h2>
 
                       <p className="mt-1 text-xs text-slate-600">
                         Your interview performance
@@ -306,9 +302,7 @@ const Dashboard = () => {
                   <div className="relative text-center">
                     <p className="text-3xl font-bold">78%</p>
 
-                    <p className="mt-1 text-[10px] text-slate-600">
-                      Average
-                    </p>
+                    <p className="mt-1 text-[10px] text-slate-600">Average</p>
                   </div>
                 </div>
 
@@ -324,13 +318,11 @@ const Dashboard = () => {
                     </span>
                   </div>
 
-                  <p className="mt-4 text-lg font-semibold">
-                    Good progress!
-                  </p>
+                  <p className="mt-4 text-lg font-semibold">Good progress!</p>
 
                   <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
-                    Your performance is improving. Keep practicing to reach
-                    your target score and strengthen your weaker areas.
+                    Your performance is improving. Keep practicing to reach your
+                    target score and strengthen your weaker areas.
                   </p>
 
                   <button className="mt-5 text-xs font-semibold text-emerald-400 transition hover:text-emerald-300">
@@ -341,23 +333,11 @@ const Dashboard = () => {
 
               {/* Progress */}
               <div className="mt-8 grid gap-5 border-t border-white/[0.06] pt-6 sm:grid-cols-3">
-                <ProgressItem
-                  label="Technical"
-                  value="84%"
-                  width="84%"
-                />
+                <ProgressItem label="Technical" value="84%" width="84%" />
 
-                <ProgressItem
-                  label="Communication"
-                  value="72%"
-                  width="72%"
-                />
+                <ProgressItem label="Communication" value="72%" width="72%" />
 
-                <ProgressItem
-                  label="Confidence"
-                  value="78%"
-                  width="78%"
-                />
+                <ProgressItem label="Confidence" value="78%" width="78%" />
               </div>
             </div>
           </div>
@@ -375,13 +355,11 @@ const Dashboard = () => {
                 Quick Practice
               </p>
 
-              <h2 className="mt-2 text-2xl font-bold">
-                Practice Interview
-              </h2>
+              <h2 className="mt-2 text-2xl font-bold">Practice Interview</h2>
 
               <p className="mt-3 text-sm leading-6 text-slate-500">
-                Start a realistic mock interview and get AI-powered feedback
-                on your answers.
+                Start a realistic mock interview and get AI-powered feedback on
+                your answers.
               </p>
 
               <div className="mt-5 flex items-center gap-3 text-[10px] text-slate-600">
@@ -392,7 +370,6 @@ const Dashboard = () => {
 
               <button className="group mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5">
                 Start Practice
-
                 <FiArrowRight
                   size={16}
                   className="transition-transform group-hover:translate-x-1"
@@ -415,9 +392,7 @@ const Dashboard = () => {
                 </div>
 
                 <div>
-                  <h2 className="font-semibold">
-                    Recent Activity
-                  </h2>
+                  <h2 className="font-semibold">Recent Activity</h2>
 
                   <p className="mt-1 text-xs text-slate-600">
                     Your latest interview activity
@@ -438,9 +413,7 @@ const Dashboard = () => {
               </div>
 
               <div>
-                <p className="text-sm font-semibold">
-                  Technical Interview
-                </p>
+                <p className="text-sm font-semibold">Technical Interview</p>
 
                 <p className="mt-1 text-xs text-slate-600">
                   Completed recently
@@ -606,13 +579,7 @@ const Dashboard = () => {
    STAT CARD
 ================================================================ */
 
-const StatCard = ({
-  icon,
-  title,
-  value,
-  subtitle,
-  color = "emerald",
-}) => {
+const StatCard = ({ icon, title, value, subtitle, color = "emerald" }) => {
   const styles = {
     emerald: {
       icon: "bg-emerald-500/10 text-emerald-400",
@@ -654,17 +621,11 @@ const StatCard = ({
         />
       </div>
 
-      <p className="relative mt-5 text-xs text-slate-500">
-        {title}
-      </p>
+      <p className="relative mt-5 text-xs text-slate-500">{title}</p>
 
-      <p className="relative mt-1 text-2xl font-bold tracking-tight">
-        {value}
-      </p>
+      <p className="relative mt-1 text-2xl font-bold tracking-tight">{value}</p>
 
-      <p className={`relative mt-3 text-[10px] ${style.text}`}>
-        {subtitle}
-      </p>
+      <p className={`relative mt-3 text-[10px] ${style.text}`}>{subtitle}</p>
     </div>
   );
 };
@@ -673,21 +634,13 @@ const StatCard = ({
    PROGRESS ITEM
 ================================================================ */
 
-const ProgressItem = ({
-  label,
-  value,
-  width,
-}) => {
+const ProgressItem = ({ label, value, width }) => {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-[11px] text-slate-500">
-          {label}
-        </span>
+        <span className="text-[11px] text-slate-500">{label}</span>
 
-        <span className="text-[11px] font-medium text-slate-400">
-          {value}
-        </span>
+        <span className="text-[11px] font-medium text-slate-400">{value}</span>
       </div>
 
       <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.05]">
@@ -706,12 +659,7 @@ const ProgressItem = ({
    QUICK CARD
 ================================================================ */
 
-const QuickCard = ({
-  icon,
-  title,
-  description,
-  color = "emerald",
-}) => {
+const QuickCard = ({ icon, title, description, color = "emerald" }) => {
   const styles = {
     emerald: {
       icon: "bg-emerald-500/10 text-emerald-400",
@@ -745,13 +693,9 @@ const QuickCard = ({
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold">
-          {title}
-        </p>
+        <p className="text-sm font-semibold">{title}</p>
 
-        <p className="mt-1 text-xs text-slate-600">
-          {description}
-        </p>
+        <p className="mt-1 text-xs text-slate-600">{description}</p>
       </div>
 
       <FiArrowRight
