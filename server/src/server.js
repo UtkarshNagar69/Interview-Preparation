@@ -12,7 +12,7 @@ const userRoute = require("./routes/userRoute");
 const categoryRoute = require("./routes/categoryRoute");
 const interviewRoute = require("./routes/interviewRoute");
 const aiRoute = require("./routes/aiRoute");
-const attemptRoute = require("./routes/attemptRoutes");
+const attemptRoute = require("./routes/attemptRoute");
 
 const app = express();
 connectDB();
@@ -20,6 +20,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use("/users", userRoute);
 app.use("/categories", categoryRoute);
 app.use("/interview", interviewRoute);
@@ -33,6 +34,6 @@ app.use("/", (req, res) => {
 });
 
 const PORT = process.env.PORT;
-app.listen(PORT, (error) =>
-  error ? console.log(error) : console.log(`Server is Running at Port ${PORT}`),
+app.listen(PORT, (err) =>
+  err ? console.log(err) : console.log(`Server is Running at Port ${PORT}`),
 );

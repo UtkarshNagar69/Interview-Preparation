@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
-const isValid = (value) => {
-  if (typeof value === "undefined" || value === "null") return false;
-  if (typeof value === "String" && value.trim().length === 0) return false;
-  if (typeof value === "number" && isNaN(value)) return false;
+const isValid = (input) => {
+  if (typeof input === "undefined" || input === null) return false;
+  if (typeof input === "string" && input.trim().length === 0) return false;
+  if (typeof input === "number" && isNaN(input)) return false;
 
   return true;
 };
 
-const isValidFullName = (input) => /^[a-zA-Z ]*$/.test(input);
+const isValidFullName = (input) => /^[A-Za-z ]*$/.test(input);
 const isValidCategoryName = (input) => /^[A-Za-z ]*$/.test(input);
 
 const isValidEmail = (input) =>
@@ -24,14 +24,14 @@ const isValidPassword = (input) =>
     input,
   );
 
-const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+const isValidObjectId = (objectId) => mongoose.Types.ObjectId.isValid(objectId);
 
 module.exports = {
   isValid,
-  isValidObjectId,
   isValidFullName,
   isValidEmail,
   isValidPhone,
   isValidPassword,
+  isValidObjectId,
   isValidCategoryName,
 };

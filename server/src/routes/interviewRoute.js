@@ -9,7 +9,7 @@ const {
   getInterviewById,
   updateInterview,
   deleteInterview,
-} = require("../controllers/interviewControllers");
+} = require("../controllers/interviewController");
 
 // Admin Routes
 router.post("/add-interview", authentication, authorization, addInterview);

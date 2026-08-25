@@ -2,21 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  loginUser,
   signupUser,
+  loginUser,
   getProfile,
   updateProfile,
   deleteProfile,
   getAllUsers,
   deleteUser,
 } = require("../controllers/userController");
-
-const { authorization, authentication } = require("../middlewares/auth");
+const { authentication, authorization } = require("../middlewares/auth");
 
 const upload = require("../config/multer");
 
-router.post("/login", loginUser);
 router.post("/signup", upload.single("profileImage"), signupUser);
+router.post("/login", loginUser);
 router.get("/profile", authentication, getProfile);
 router.put(
   "/update",

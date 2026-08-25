@@ -19,15 +19,13 @@ const attemptSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
-      },
-      {
+
         type: {
           type: String,
           default: "technical",
         },
-      },
-      {
-        answers: {
+
+        answer: {
           type: String,
           default: "",
         },

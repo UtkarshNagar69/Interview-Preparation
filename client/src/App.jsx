@@ -10,6 +10,14 @@ import Performance from "./pages/user/Performance";
 import History from "./pages/user/History";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminRoute from "./routes/AdminRoute";
+
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminCategory from "./pages/admin/Categories";
+import AdminInterviews from "./pages/admin/Interviews";
+import AdminReports from "./pages/admin/Reports";
 
 const App = () => {
   return (
@@ -27,6 +35,15 @@ const App = () => {
           <Route path="/result/:id" element={<Result />} />
           <Route path="/performance" element={<Performance />} />
           <Route path="/history" element={<History />} />
+        </Route>
+
+        {/* Admin Routes */}
+        <Route element={<AdminRoute />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/categories" element={<AdminCategory />} />
+          <Route path="/admin/interviews" element={<AdminInterviews />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
         </Route>
       </Routes>
     </>

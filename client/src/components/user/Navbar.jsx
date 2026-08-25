@@ -18,8 +18,10 @@ const Navbar = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
+  //  Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     toast.success("Logged out successfully");
     navigate("/login");
   };
@@ -48,37 +50,96 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50">
-      {/* Glass navbar */}
-      <div className="border-b border-white/[0.08] bg-[#020617]/75 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-2xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <NavLink
-            to="/dashboard"
-            onClick={() => setMenuOpen(false)}
-            className="group flex items-center gap-3"
+    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+
+        <NavLink to="/dashboard" className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-sm font-bold shadow-lg shadow-indigo-500/20">
+            IP
+          </div>
+
+          <div className="hidden sm:block">
+            <h1 className="text-sm font-bold text-white">Interview Prep</h1>
+
+            <p className="text-[10px] text-slate-500">AI Interview Platform</p>
+          </div>
+        </NavLink>
+
+        {/* Desktop Navigation */}
+
+        <nav className="hidden items-center gap-1 lg:flex">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+
+            return (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-indigo-500/10 text-indigo-400"
+                      : "text-slate-400 hover:bg-slate-900 hover:text-white"
+                  }`
+                }
+              >
+                <Icon size={16} />
+                {link.name}
+              </NavLink>
+            );
+          })}
+        </nav>
+
+        {/* Right Section */}
+
+        <div className="flex items-center gap-2">
+          {/* Profile */}
+
+          <button
+            className="hidden items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 md:flex"
+            onClick={() => navigate("/profile")}
           >
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 shadow-lg shadow-emerald-500/10 backdrop-blur-xl">
-              <div className="absolute inset-0 bg-emerald-400/10 blur-xl transition group-hover:bg-emerald-400/20" />
-
-              <span className="relative text-xs font-bold text-emerald-300">
-                IP
-              </span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-xs font-bold">
+              U
             </div>
 
-            <div className="hidden sm:block">
-              <h1 className="text-sm font-bold tracking-wide text-white">
-                InterviewPrep
-              </h1>
+            <span className="text-sm font-medium text-slate-300">Profile</span>
+          </button>
 
-              <p className="mt-0.5 text-[10px] text-slate-600">
-                AI Interview Platform
-              </p>
-            </div>
-          </NavLink>
+          {/* Settings */}
 
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-1 lg:flex">
+          <button
+            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-slate-400 transition hover:border-slate-700 hover:text-white md:flex"
+            title="Settings"
+            onClick={() => navigate("/settings")}
+          >
+            <FiSettings size={17} />
+          </button>
+
+          {/* Logout UI */}
+
+          <button
+            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-slate-400 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400 md:flex"
+            title="Logout"
+            onClick={handleLogout}
+          >
+            <FiLogOut size={17} />
+          </button>
+
+          {/* Mobile Menu UI */}
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-slate-300 lg:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+          </button>
+        </div>
+      </div>
+
+      {menuOpen && (
+        <div className="border-t border-slate-800 bg-slate-950 px-4 py-4 lg:hidden">
+          <nav className="space-y-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
 
@@ -86,141 +147,60 @@ const Navbar = () => {
                 <NavLink
                   key={link.path}
                   to={link.path}
+                  onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    `group relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                    `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
                       isActive
-                        ? "border border-emerald-400/10 bg-emerald-500/[0.08] text-emerald-400 shadow-inner"
-                        : "border border-transparent text-slate-500 hover:border-white/[0.05] hover:bg-white/[0.035] hover:text-slate-200"
+                        ? "bg-indigo-500/10 text-indigo-400"
+                        : "text-slate-400 hover:bg-slate-900 hover:text-white"
                     }`
                   }
                 >
-                  {({ isActive }) => (
-                    <>
-                      <Icon
-                        size={16}
-                        className={
-                          isActive
-                            ? "text-emerald-400"
-                            : "transition group-hover:text-emerald-400"
-                        }
-                      />
+                  <Icon size={18} />
 
-                      {link.name}
-
-                      {isActive && (
-                        <span className="absolute bottom-0 left-1/2 h-px w-5 -translate-x-1/2 bg-emerald-400/70 shadow-[0_0_10px_rgba(16,185,129,0.6)]" />
-                      )}
-                    </>
-                  )}
+                  {link.name}
                 </NavLink>
               );
             })}
-          </nav>
 
-          {/* Right actions */}
-          <div className="flex items-center gap-2">
             {/* Profile */}
-            <button
-              type="button"
-              className="hidden items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.035] px-3 py-2 backdrop-blur-xl transition hover:border-emerald-400/15 hover:bg-white/[0.06] md:flex"
-            >
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-emerald-400/15 bg-emerald-500/10 text-emerald-400">
-                <FiUser size={13} />
-              </div>
 
-              <span className="text-xs font-medium text-slate-300">
-                Profile
-              </span>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/profile");
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition hover:bg-slate-900 hover:text-white"
+            >
+              <FiUser size={18} />
+              Profile
             </button>
 
             {/* Settings */}
+
             <button
-              type="button"
-              title="Settings"
-              className="hidden h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.035] text-slate-500 backdrop-blur-xl transition hover:border-teal-400/15 hover:bg-teal-500/[0.05] hover:text-teal-400 md:flex"
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/settings");
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition hover:bg-slate-900 hover:text-white"
             >
-              <FiSettings size={17} />
+              <FiSettings size={18} />
+              Settings
             </button>
 
             {/* Logout */}
+
             <button
-              type="button"
-              title="Logout"
               onClick={handleLogout}
-              className="hidden h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.035] text-slate-500 backdrop-blur-xl transition hover:border-red-400/20 hover:bg-red-500/[0.07] hover:text-red-400 md:flex"
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
             >
-              <FiLogOut size={17} />
+              <FiLogOut size={18} />
+              Logout
             </button>
-
-            {/* Mobile menu */}
-            <button
-              type="button"
-              aria-label="Toggle menu"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.035] text-slate-300 backdrop-blur-xl transition hover:border-emerald-400/20 hover:bg-emerald-500/[0.05] hover:text-emerald-400 lg:hidden"
-            >
-              {menuOpen ? <FiX size={19} /> : <FiMenu size={19} />}
-            </button>
-          </div>
+          </nav>
         </div>
-
-        {/* Mobile Navigation */}
-        {menuOpen && (
-          <div className="border-t border-white/[0.06] bg-[#020617]/90 px-4 py-4 backdrop-blur-2xl lg:hidden">
-            <div className="mx-auto max-w-7xl space-y-2 sm:px-2">
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-
-                return (
-                  <NavLink
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition ${
-                        isActive
-                          ? "border-emerald-400/15 bg-emerald-500/[0.08] text-emerald-400"
-                          : "border-transparent text-slate-500 hover:border-white/[0.06] hover:bg-white/[0.035] hover:text-white"
-                      }`
-                    }
-                  >
-                    <Icon size={17} />
-                    {link.name}
-                  </NavLink>
-                );
-              })}
-
-              {/* Mobile profile */}
-              <button
-                type="button"
-                className="flex w-full items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 text-left text-sm text-slate-400"
-              >
-                <FiUser size={17} />
-                Profile
-              </button>
-
-              {/* Mobile settings */}
-              <button
-                type="button"
-                className="flex w-full items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 text-left text-sm text-slate-400"
-              >
-                <FiSettings size={17} />
-                Settings
-              </button>
-
-              {/* Mobile logout */}
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-xl border border-red-400/10 bg-red-500/[0.04] px-4 py-3 text-left text-sm text-red-400 transition hover:bg-red-500/[0.08]"
-              >
-                <FiLogOut size={17} />
-                Logout
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </header>
   );
 };
