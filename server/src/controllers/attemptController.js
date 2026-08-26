@@ -367,13 +367,19 @@ const getMyAnalytics = async (req, res) => {
 // Get All Attempts (Admin)
 const getAllAttempts = async (req, res) => {
   try {
-    let allAttempts = await AttemptModel.find();
+    let allAttempts = await AttemptModel.find()
+      .populate("userId", "fullName email")
+      .populate("interviewId", "title")
+      .sort({ createdAt: -1 });
+
     if (allAttempts.length === 0) {
       return res.status(404).json({ msg: "No Attempts Found" });
     }
-    return res
-      .status(200)
-      .json({ msg: "Attempts Fetched Successfully", attempts: allAttempts });
+
+    return res.status(200).json({
+      msg: "Attempts Fetched Successfully",
+      attempts: allAttempts,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });

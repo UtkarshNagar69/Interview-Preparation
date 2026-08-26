@@ -1,17 +1,17 @@
 const ai = require("../config/gemini");
-
+const CategoryModel = require("../models/categoryModel");
 const { isValid } = require("../utils/validator");
 
-// Generate Interview Question
+// Generate Interview Questions
 const generateQuestions = async (req, res) => {
   try {
-    let data = req.body;
+    const data = req.body;
 
     if (!data || Object.keys(data).length === 0) {
       return res.status(400).json({ msg: "Bad Request! No Data Provided" });
     }
 
-    let { category, difficulty, noOfQuestions } = data;
+    const { category, difficulty, noOfQuestions } = data;
 
     if (!isValid(category)) {
       return res.status(400).json({ msg: "Category is Required" });
@@ -21,12 +21,8 @@ const generateQuestions = async (req, res) => {
       return res.status(400).json({ msg: "Difficulty is Required" });
     }
 
-    if (
-      difficulty !== "easy" &&
-      difficulty !== "medium" &&
-      difficulty !== "hard"
-    ) {
-      return res.status(400).json({ msg: "Invalid Difficulty " });
+    if (!["easy", "medium", "hard"].includes(difficulty)) {
+      return res.status(400).json({ msg: "Invalid Difficulty" });
     }
 
     if (!isValid(noOfQuestions)) {
@@ -34,59 +30,70 @@ const generateQuestions = async (req, res) => {
     }
 
     if (noOfQuestions < 1 || noOfQuestions > 10) {
-      return res
-        .status(400)
-        .json({ msg: "Number Of Questions must be between 1 and 10" });
+      return res.status(400).json({
+        msg: "Number Of Questions must be between 1 and 10",
+      });
     }
 
+    const categoryData = await CategoryModel.findById(category);
+
+    if (!categoryData) {
+      return res.status(404).json({ msg: "Category not found" });
+    }
+
+    const categoryName = categoryData.categoryName;
+
     const prompt = `
-    You are an expert technical interviewer.
-    
-    Generate ${noOfQuestions} interview questions for ${category}.
+You are an expert technical interviewer.
 
-    Difficulty Level: ${difficulty}
+Generate ${noOfQuestions} interview questions specifically about:
+${categoryName}
 
-    Rules:
-    1. Questions should be relevant to the given category.
-    2. Questions should match the difficulty level.
-    3. Do not provide answers.
-    4. Return only valid JSON.
-    5. Use this format:
+Difficulty Level: ${difficulty}
 
-    [
-     {
-        "question":"Question here",
-        "type":"technical"
-     }
-    ]
-    `;
+Rules:
+1. Questions MUST be directly related to ${categoryName}.
+2. Do not ask questions from unrelated technologies or topics.
+3. Questions must match the difficulty level.
+4. Do not provide answers.
+5. Return only valid JSON.
+6. Use exactly this format:
 
-    let response = await ai.models.generateContent({
+[
+  {
+    "question": "Question here",
+    "type": "technical"
+  }
+]
+`;
+
+    const response = await ai.models.generateContent({
       model: "gemini-3.6-flash",
       contents: prompt,
     });
 
-    let result = response.text;
-    let questions = JSON.parse(result);
+    const questions = JSON.parse(response.text);
 
-    return res
-      .status(201)
-      .json({ msg: "Interview Questions Generated", questions });
+    return res.status(201).json({
+      msg: "Interview Questions Generated",
+      questions,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
   }
 };
 
-// Generate Ideal Answer + Improvement
+// Generate Answer Feedback
 const generateAnswerFeedback = async (req, res) => {
   try {
-    let data = req.body;
+    const data = req.body;
+
     if (!data || Object.keys(data).length === 0) {
       return res.status(400).json({ msg: "Bad Request! No Data Provided" });
     }
 
-    let { question, answer } = data;
+    const { question, answer } = data;
 
     if (!isValid(question)) {
       return res.status(400).json({ msg: "Question is Required" });
@@ -96,63 +103,66 @@ const generateAnswerFeedback = async (req, res) => {
       return res.status(400).json({ msg: "Answer is Required" });
     }
 
-    let prompt = `
-    You are an expert technical interviewer.
+    const prompt = `
+You are an expert technical interviewer.
 
-    Analyze the following interview question and candidate answer.
+Analyze the following interview question and candidate answer.
 
-    Question:
-    ${question}
+Question:
+${question}
 
-    Candidate Answer:
-    ${answer}
+Candidate Answer:
+${answer}
 
-    Generate:
-    1. An ideal answer
-    2. Improvement suggestions
+Generate:
+1. An ideal answer
+2. Improvement suggestions
 
-    Rules:
-    1. Keep the ideal answer technically correct.
-    2. Improvement suggestions should be practical.
-    3. Do not give unnecessary information.
-    4. Return only valid JSON.
+Rules:
+1. Keep the ideal answer technically correct.
+2. Improvement suggestions should be practical.
+3. Do not give unnecessary information.
+4. Return only valid JSON.
 
-    Use exactly this format:
+Use exactly this format:
 
-    {
-      "idealAnswer": "Ideal answer here",
-      "improvementSuggestions": [
-        "Suggestion 1",
-        "Suggestion 2",
-        "Suggestion 3"
-      ]
-    }
-    `;
+{
+  "idealAnswer": "Ideal answer here",
+  "improvementSuggestions": [
+    "Suggestion 1",
+    "Suggestion 2",
+    "Suggestion 3"
+  ]
+}
+`;
 
-    let response = await ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-3.6-flash",
       contents: prompt,
     });
 
-    let result = response.text;
-    let feedback = JSON.parse(result);
+    const feedback = JSON.parse(response.text);
 
-    return res.status(200).json({ msg: "Answer Feedback Generated", feedback });
+    return res.status(200).json({
+      msg: "Answer Feedback Generated",
+      feedback,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
   }
 };
 
-// Get Personalised Learning Roadmap
+// Generate Learning Roadmap
 const genrateLearningRoadmap = async (req, res) => {
   try {
-    let data = req.body;
+    const data = req.body;
+
     if (!data || Object.keys(data).length === 0) {
       return res.status(400).json({ msg: "Bad Request! No Data Provided" });
     }
 
-    let { category, difficulty, score, feedback } = data;
+    const { category, difficulty, score, feedback } = data;
 
     if (!isValid(category)) {
       return res.status(400).json({ msg: "Category is Required" });
@@ -161,12 +171,9 @@ const genrateLearningRoadmap = async (req, res) => {
     if (!isValid(difficulty)) {
       return res.status(400).json({ msg: "Difficulty is Required" });
     }
-    if (
-      difficulty !== "easy" &&
-      difficulty !== "medium" &&
-      difficulty !== "hard"
-    ) {
-      return res.status(400).json({ msg: "Invalid Difficulty " });
+
+    if (!["easy", "medium", "hard"].includes(difficulty)) {
+      return res.status(400).json({ msg: "Invalid Difficulty" });
     }
 
     if (score === undefined || score === null) {
@@ -174,75 +181,78 @@ const genrateLearningRoadmap = async (req, res) => {
     }
 
     if (score < 0 || score > 100) {
-      return res.status(400).json({ msg: "Score must be between 0 and 100" });
+      return res.status(400).json({
+        msg: "Score must be between 0 and 100",
+      });
     }
 
     if (!isValid(feedback)) {
       return res.status(400).json({ msg: "Feedback is Required" });
     }
 
-    let prompt = `
-      You are an expert technical mentor.
+    const prompt = `
+You are an expert technical mentor.
 
-      Create a personalized learning roadmap for a candidate based on their interview performance.
+Create a personalized learning roadmap for a candidate based on their interview performance.
 
-      Category:
-      ${category}
+Category:
+${category}
 
-      Difficulty:
-      ${difficulty}
+Difficulty:
+${difficulty}
 
-      Score:
-      ${score}/100
+Score:
+${score}/100
 
-      Interview Feedback:
-      ${feedback}
+Interview Feedback:
+${feedback}
 
-      Create a practical learning roadmap.
+Create a practical learning roadmap.
 
-      Rules:
-      1. Identify weak areas from the feedback.
-      2. Suggest topics the candidate should study.
-      3. Suggest practical exercises.
-      4. Arrange the roadmap in a logical order.
-      5. Keep it beginner-friendly and practical.
-      6. Return only valid JSON.
+Rules:
+1. Identify weak areas from the feedback.
+2. Suggest topics the candidate should study.
+3. Suggest practical exercises.
+4. Arrange the roadmap in a logical order.
+5. Keep it beginner-friendly and practical.
+6. Return only valid JSON.
 
-      Use exactly this format:
+Use exactly this format:
 
-      {
-        "summary": "Short performance summary",
-        "weakAreas": [
-          "Weak area 1",
-          "Weak area 2"
-        ],
-        "roadmap": [
-          {
-            "step": 1,
-            "topic": "Topic name",
-            "description": "What to learn",
-            "practice": "What to practice"
-          },
-          {
-            "step": 2,
-            "topic": "Topic name",
-            "description": "What to learn",
-            "practice": "What to practice"
-          }
-        ]
-      }
-      `;
+{
+  "summary": "Short performance summary",
+  "weakAreas": [
+    "Weak area 1",
+    "Weak area 2"
+  ],
+  "roadmap": [
+    {
+      "step": 1,
+      "topic": "Topic name",
+      "description": "What to learn",
+      "practice": "What to practice"
+    },
+    {
+      "step": 2,
+      "topic": "Topic name",
+      "description": "What to learn",
+      "practice": "What to practice"
+    }
+  ]
+}
+`;
 
-    let response = await ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-3.6-flash",
       contents: prompt,
     });
 
-    let result = response.text;
+    const roadmap = JSON.parse(response.text);
 
-    let roadmap = JSON.parse(result);
-
-    return res.status(200).json({ msg: "Learning Roadmap Generated", roadmap });
+    return res.status(200).json({
+      msg: "Learning Roadmap Generated",
+      roadmap,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });

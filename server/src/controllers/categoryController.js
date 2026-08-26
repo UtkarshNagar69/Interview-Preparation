@@ -51,7 +51,9 @@ const addCategory = async (req, res) => {
     }
 
     let category = await CategoryModel.create(categoryData);
-    return res.status(200).json({ msg: "Category Added Successfully", category });
+    return res
+      .status(200)
+      .json({ msg: "Category Added Successfully", category });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
@@ -61,7 +63,12 @@ const addCategory = async (req, res) => {
 // Get All Category
 const getAllCategory = async (req, res) => {
   try {
-    let categories = await CategoryModel.find();
+    let filter = {};
+
+    if (req.role !== "admin") {
+      filter.status = "active";
+    }
+    let categories = await CategoryModel.find(filter);
 
     if (categories.length === 0) {
       return res.status(404).json({
@@ -217,6 +224,16 @@ const deleteCategory = async (req, res) => {
       });
     }
 
+    const linkedInterviews = await InterviewModel.countDocuments({
+      categoryId,
+    });
+
+    if (linkedInterviews > 0) {
+      return res.status(400).json({
+        msg: "Cannot delete category because interviews are linked to it",
+      });
+    }
+
     await CategoryModel.findByIdAndDelete(categoryId);
 
     return res.status(200).json({
@@ -224,7 +241,10 @@ const deleteCategory = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ msg: "Internal Server Error" });
+
+    return res.status(500).json({
+      msg: "Internal Server Error",
+    });
   }
 };
 

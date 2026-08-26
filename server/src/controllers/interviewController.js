@@ -99,6 +99,10 @@ const getAllInterviews = async (req, res) => {
     }
 
     let filter = {};
+
+    if (req.role !== "admin") {
+      filter.isActive = true;
+    }
     // Search By Title
     if (search) {
       filter.title = {
@@ -148,16 +152,14 @@ const getAllInterviews = async (req, res) => {
 
     let totalPages = Math.ceil(totalInterviews / limit);
 
-    return res
-      .status(200)
-      .json({
-        msg: "Interviews Fetched Successfully",
-        page,
-        limit,
-        totalInterviews,
-        totalPages,
-        interviews,
-      });
+    return res.status(200).json({
+      msg: "Interviews Fetched Successfully",
+      page,
+      limit,
+      totalInterviews,
+      totalPages,
+      interviews,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Internal Server Error" });
@@ -290,21 +292,40 @@ const deleteInterview = async (req, res) => {
     let interviewId = req.params.id;
 
     if (!isValidObjectId(interviewId)) {
-      return res.status(400).json({ msg: "Invalid Interview Id" });
+      return res.status(400).json({
+        msg: "Invalid Interview Id",
+      });
     }
 
-    let deletedInterview = await InterviewModel.findByIdAndDelete(interviewId);
+    let interview = await InterviewModel.findById(interviewId);
 
-    if (!deletedInterview) {
-      return res
-        .status(404)
-        .json({ msg: "Interview Not Found Or already deleted" });
+    if (!interview) {
+      return res.status(404).json({
+        msg: "Interview Not Found Or already deleted",
+      });
     }
 
-    return res.status(200).json({ msg: "Interview Deleted Successfully" });
+    const linkedAttempts = await AttemptModel.countDocuments({
+      interviewId,
+    });
+
+    if (linkedAttempts > 0) {
+      return res.status(400).json({
+        msg: "Cannot delete interview because attempts are linked to it",
+      });
+    }
+
+    await InterviewModel.findByIdAndDelete(interviewId);
+
+    return res.status(200).json({
+      msg: "Interview Deleted Successfully",
+    });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ msg: "Internal Server Error" });
+
+    return res.status(500).json({
+      msg: "Internal Server Error",
+    });
   }
 };
 

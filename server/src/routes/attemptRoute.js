@@ -14,6 +14,10 @@ const {
 
 const { authentication, authorization } = require("../middlewares/auth");
 
+// Admin
+router.get("/all-attempts", authentication, authorization, getAllAttempts);
+
+// User
 router.post("/start-interview/:interviewId", authentication, startInterview);
 router.post("/:attemptId/questions", authentication, addQuestionsToAttempt);
 router.put(
@@ -27,8 +31,5 @@ router.get("/my-attempts", authentication, getMyAttempts);
 router.get("/:attemptId", authentication, getSingleAttempt);
 router.get("/analytics/my-analytics", authentication, getMyAnalytics);
 
-// Admin
-
-router.get("/all-attempts", authentication, authorization, getAllAttempts);
 
 module.exports = router;

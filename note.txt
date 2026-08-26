@@ -1,0 +1,3 @@
+admin dashboard logout
+category page
+report page 
